@@ -1,0 +1,6 @@
+*.o
+*.sh
+/build/
+*.iso/
+/iso/boot/eris_kernel
+
