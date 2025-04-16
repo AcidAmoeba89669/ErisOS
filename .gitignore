@@ -1,6 +1,5 @@
-*.o
-*.sh
 /build/
-*.iso/
-/iso/boot/eris_kernel
-
+*.img
+*.bin
+bochs_config
+*.sh
