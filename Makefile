@@ -24,10 +24,18 @@ $(BUILD_DIR)/main.img: bootloader kernel
 #
 # Bootloader
 #
-bootloader: $(BUILD_DIR)/bootloader.bin
+bootloader: stage_1 stage_2
 
-$(BUILD_DIR)/bootloader.bin: always
-	$(ASM) $(SRC_DIR)/bootloader/boot.asm -f bin -o $(BUILD_DIR)/bootloader.bin
+stage_1: $(BUILD_DIR)/stage_1.bin
+
+$(BUILD_DIR)/stage_1.bin: always
+	$(MAKE) -C $(SRC_DIR)/bootloader/stage_1 BUILD_DIR=%(abspath $(BUILD_DIR))
+
+
+stage_2: $(BUILD_DIR)/stage_2.bin
+
+$(BUILD_DIR)/stage_2.bin: always
+	$(MAKE) -C $(SRC_DIR)/bootloader/stage_2 BUILD_DIR=%(abspath $(BUILD_DIR))
 
 #
 # Kernel
@@ -57,5 +65,8 @@ always:
 clean:
 	rm -rf $(BUILD_DIR)/*
 
+#
+# Run
+#
 run:
 	qemu-system-x86_64 -drive file=$(BUILD_DIR)/main.img,format=raw -nographic
