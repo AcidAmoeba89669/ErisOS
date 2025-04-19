@@ -17,7 +17,8 @@ floppy_image: $(BUILD_DIR)/main.img
 $(BUILD_DIR)/main.img: bootloader kernel
 	dd if=/dev/zero of=$(BUILD_DIR)/main.img bs=512 count=2880
 	mkfs.fat -F 12 -n "ERIS" $(BUILD_DIR)/main.img
-	dd if=$(BUILD_DIR)/bootloader.bin of=$(BUILD_DIR)/main.img conv=notrunc
+	dd if=$(BUILD_DIR)/stage_1.bin of=$(BUILD_DIR)/main.img conv=notrunc
+	mcopy -i $(BUILD_DIR)/main.img $(BUILD_DIR)/stage_2.bin "::stage_2.bin"
 	mcopy -i $(BUILD_DIR)/main.img $(BUILD_DIR)/kernel.bin "::kernel.bin"
 	mcopy -i $(BUILD_DIR)/main.img test.txt "::test.txt"
 
@@ -43,7 +44,7 @@ $(BUILD_DIR)/stage_2.bin: always
 kernel: $(BUILD_DIR)/kernel.bin
 
 $(BUILD_DIR)/kernel.bin: always
-	$(ASM) $(SRC_DIR)/kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
+	$(MAKE) -C $(SRC_DIR)/kernel BUILD_DIR=%(abspath $(BUILD_DIR))
 
 #
 # Tools
